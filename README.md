@@ -1,6 +1,5 @@
-# NHL-Analytics
+# NHL-Analytics-Data
 
-This project analyzes NHL team and player data from the past 10 hockey seasons (2010-2019). The data comes from Hockey Reference (https://www.hockey-reference.com/teams).
+player_stats: The season statistics for each player that appeared in an NHL regular season game from each season from 2010-2019. Some of the statistics include games played, goals, assists, points, hits, blocks, point shares, time on ice, and more. All data was copied from Hockey Reference (https://www.hockey-reference.com/teams).
 
-The goal of the project is to determine how the makeup of teams affects their regular season success. For example, I am aiming to discover the statistics that are important for the players at each level of the team (star players, middle line players, role players, etc). The response variable that I am using is regulation win percentage, in order to eliminate the randomness that NHL overtime introduces.
-
+team_stats: The season statistics for each team in each NHL regular season from 2010-2019. The team statistics are simply the cumulative statistics for the team using all of the same statistics from player_stats. All data was copied from Hockey Reference (https://www.hockey-reference.com/teams).
