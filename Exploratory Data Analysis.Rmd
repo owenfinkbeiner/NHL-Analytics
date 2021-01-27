@@ -1,0 +1,115 @@
+---
+title: "Exploratory Data Analysis"
+author: "Owen Finkbeiner"
+output: html_notebook
+---
+
+```{r}
+# Load necessary packages
+library(tidyverse)
+library(ggplot2)
+
+# Set working directory
+setwd("C:\\Users\\owenf\\OneDrive\\Desktop\\NHL Analytics")
+```
+
+```{r}
+# Goals
+for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
+  plot1 <- team %>%
+  ggplot(aes_string(colnames(team[i]), colnames(team[26]))) +
+  geom_point(stat = "identity")
+  
+  print(plot1)
+}
+```
+
+```{r}
+# Points
+for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
+  plot2 <- team %>%
+  ggplot(aes_string(colnames(team[i+1]), colnames(team[26]))) +
+  geom_point(stat = "identity")
+  
+  print(plot2)
+}
+```
+
+```{r}
+# Shots
+for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
+  plot3 <- team %>%
+  ggplot(aes_string(colnames(team[i+2]), colnames(team[26]))) +
+  geom_point(stat = "identity")
+  
+  print(plot3)
+}
+```
+
+```{r}
+# Point Shares
+for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
+  plot4 <- team %>%
+  ggplot(aes_string(colnames(team[i+3]), colnames(team[26]))) +
+  geom_point(stat = "identity")
+  
+  print(plot4)
+}
+```
+
+```{r}
+# Offensive Point Shares
+for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
+  plot5 <- team %>%
+  ggplot(aes_string(colnames(team[i+4]), colnames(team[26]))) +
+  geom_point(stat = "identity")
+  
+  print(plot5)
+}
+```
+
+```{r}
+# Defensive Point Shares
+for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
+  plot6 <- team %>%
+  ggplot(aes_string(colnames(team[i+5]), colnames(team[26]))) +
+  geom_point(stat = "identity")
+  
+  print(plot6)
+}
+```
+
+```{r}
+# Blocks
+for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
+  plot7 <- team %>%
+  ggplot(aes_string(colnames(team[i+6]), colnames(team[26]))) +
+  geom_point(stat = "identity")
+  
+  print(plot7)
+}
+```
+
+```{r}
+# Hits
+for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
+  plot8 <- team %>%
+  ggplot(aes_string(colnames(team[i+7]), colnames(team[26]))) +
+  geom_point(stat = "identity")
+  
+  print(plot8)
+}
+```
+
+```{r}
+# Games played
+for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
+  plot9 <- team %>%
+  ggplot(aes_string(colnames(team[i+8]), colnames(team[26]))) +
+  geom_point(stat = "identity")
+  
+  print(plot9)
+}
+```
+
+

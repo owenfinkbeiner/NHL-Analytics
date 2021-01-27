@@ -1,5 +1,6 @@
 ---
-title: "R Notebook"
+title: "NHL Analytics"
+author: "Owen Finkbeiner"
 output: html_notebook
 ---
 
@@ -8,15 +9,19 @@ output: html_notebook
 library(tidyverse)
 library(ggplot2)
 
+# Set working directory
+setwd("C:\\Users\\owenf\\OneDrive\\Desktop\\NHL Analytics")
+
 # Load CSV files containing player data and team data
-player <- read.csv("C:\\Users\\owenf\\OneDrive\\Desktop\\NHL Analytics\\player_stats.csv")
-team <- read.csv("C:\\Users\\owenf\\OneDrive\\Desktop\\NHL Analytics\\team_stats.csv")
+player <- read.csv("./player_stats.csv") #C:\\Users\\owenf\\OneDrive\\Desktop\\NHL Analytics\\
+team <- read.csv("./team_stats.csv")
 ```
 
 ```{r}
 # Arrange team data table so that the order of which team is listed lines up with order for players
 team <- team %>%
-  arrange(Year)
+  arrange(Year) %>%
+  mutate(ID = paste0(Team, Year)) #ID: unique id for each team with name and year
 
 # Group by team and year and create a vector containing data values for each player
 groups <- player %>%
@@ -84,7 +89,8 @@ for (i in 1:303){
 ```
 
 ```{r}
-# Create new variables in team table, for average statistic values among players in certain groups
+# Create new variables in team table, for average statistic values among players in groups
+# Groups determined by their ranking of most time on ice per game
 
 for (i in 1:303){
   f <- list()
@@ -212,6 +218,12 @@ for (i in 1:303){
 ```{r}
 team
 ```
+
+```{r}
+# Output team data frame into a csv file
+write.csv(team, 'full_team_data.csv')
+```
+
 
 
 
