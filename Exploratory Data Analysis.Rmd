@@ -105,7 +105,7 @@ for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
 # Games played
 for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
   plot9 <- team %>%
-  ggplot(aes_string(colnames(team[i+8]), colnames(team[26]))) +
+  ggplot(aes_string(colnames(team[i-1]), colnames(team[26]))) +
   geom_point(stat = "identity")
   
   print(plot9)
