@@ -112,4 +112,24 @@ for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
 }
 ```
 
+```{r}
+team %>%
+  ggplot(aes(`avgDPS_D_1-3`, WIN.pct)) +
+  geom_point(stat = "identity")
+```
+
+
+```{r}
+for (i in c(10,13,17,20,22,40,44,56,65,72,89,100,137,143,150,164,166,171,199,201,204,213,215,218,220,228,245,251,258,303,305,312)){
+  plotSignificant <- team %>%
+  ggplot(aes_string(colnames(team[i+28]), colnames(team[26]))) +
+  geom_point(stat = "identity")
+  
+  print(plotSignificant)
+}
+```
+```
+
+
+
 
