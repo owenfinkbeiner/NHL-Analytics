@@ -1,0 +1,219 @@
+---
+title: "Read In Player Information"
+output: html_notebook
+---
+
+
+```{r}
+# Load necessary packages
+library(tidyverse)
+library(rvest)
+
+# Set working directory
+setwd("C:\\Users\\owenf\\OneDrive\\Desktop\\NHL Analytics")
+```
+
+
+```{r}
+list <- list()
+j <- 1
+
+for (team in c("DET","NSH","CHI","STL","CBJ","COL","EDM","VAN","CGY","MIN","DAL","SJS","LAK","NJD","PHI","PIT","NYR","NYI","OTT","BUF","TOR","BOS","MTL","WSH","CAR","FLA","TBL")){
+  for (year in c("01","02","03","04","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20")){
+  html <- paste0("https://www.hockey-reference.com/teams/", team, "/20", year, ".html")
+  webpage <- read_html(html)
+  # Read the html into list of tables
+  test <- html_table(webpage, fill=TRUE)
+  # Extract the 3rd table for player info
+  list[[j]] <- test[[3]]
+  
+  # Separate height into feet and inches
+  list[[j]] <- list[[j]] %>%
+    separate(Ht, into = c("Ht-feet","Ht-inches"))
+
+  # Change to numeric values
+  list[[j]]$`Ht-feet` <- as.numeric(list[[j]]$`Ht-feet`)
+  list[[j]]$`Ht-inches` <- as.numeric(list[[j]]$`Ht-inches`)
+
+  # Calculate height in total number of inches
+  list[[j]] <- list[[j]] %>%
+    mutate(Ht = (`Ht-feet`)*12 + `Ht-inches`) %>%
+    select(!`Ht-feet`) %>%
+    select(!`Ht-inches`)
+  
+  # Add 1 to j to continue loop
+  j <- j + 1
+}
+}
+```
+
+
+```{r}
+j <- 514
+
+for (team in c("WPG","VEG","ANA","ARI")){
+  for (year in c("18","19","20")){
+  html <- paste0("https://www.hockey-reference.com/teams/", team, "/20", year, ".html")
+  webpage <- read_html(html)
+  # Read the html into list of tables
+  test <- html_table(webpage, fill=TRUE)
+  # Extract the 3rd table for player info
+  list[[j]] <- test[[3]]
+  
+  # Separate height into feet and inches
+  list[[j]] <- list[[j]] %>%
+    separate(Ht, into = c("Ht-feet","Ht-inches"))
+
+  # Change to numeric values
+  list[[j]]$`Ht-feet` <- as.numeric(list[[j]]$`Ht-feet`)
+  list[[j]]$`Ht-inches` <- as.numeric(list[[j]]$`Ht-inches`)
+
+  # Calculate height in total number of inches
+  list[[j]] <- list[[j]] %>%
+    mutate(Ht = (`Ht-feet`)*12 + `Ht-inches`) %>%
+    select(!`Ht-feet`) %>%
+    select(!`Ht-inches`)
+  
+  # Add 1 to j to continue loop
+  j <- j + 1
+}
+}
+```
+
+
+```{r}
+j <- 526
+
+for (team in c("WPG","ANA","ARI")){
+  for (year in c("15","16","17")){
+  html <- paste0("https://www.hockey-reference.com/teams/", team, "/20", year, ".html")
+  webpage <- read_html(html)
+  # Read the html into list of tables
+  test <- html_table(webpage, fill=TRUE)
+  # Extract the 3rd table for player info
+  list[[j]] <- test[[3]]
+  
+  # Separate height into feet and inches
+  list[[j]] <- list[[j]] %>%
+    separate(Ht, into = c("Ht-feet","Ht-inches"))
+
+  # Change to numeric values
+  list[[j]]$`Ht-feet` <- as.numeric(list[[j]]$`Ht-feet`)
+  list[[j]]$`Ht-inches` <- as.numeric(list[[j]]$`Ht-inches`)
+
+  # Calculate height in total number of inches
+  list[[j]] <- list[[j]] %>%
+    mutate(Ht = (`Ht-feet`)*12 + `Ht-inches`) %>%
+    select(!`Ht-feet`) %>%
+    select(!`Ht-inches`)
+  
+  # Add 1 to j to continue loop
+  j <- j + 1
+}
+}
+```
+
+
+```{r}
+j <- 535
+
+for (team in c("WPG","ANA","PHX")){
+  for (year in c("12","13","14")){
+  html <- paste0("https://www.hockey-reference.com/teams/", team, "/20", year, ".html")
+  webpage <- read_html(html)
+  # Read the html into list of tables
+  test <- html_table(webpage, fill=TRUE)
+  # Extract the 3rd table for player info
+  list[[j]] <- test[[3]]
+  
+  # Separate height into feet and inches
+  list[[j]] <- list[[j]] %>%
+    separate(Ht, into = c("Ht-feet","Ht-inches"))
+
+  # Change to numeric values
+  list[[j]]$`Ht-feet` <- as.numeric(list[[j]]$`Ht-feet`)
+  list[[j]]$`Ht-inches` <- as.numeric(list[[j]]$`Ht-inches`)
+
+  # Calculate height in total number of inches
+  list[[j]] <- list[[j]] %>%
+    mutate(Ht = (`Ht-feet`)*12 + `Ht-inches`) %>%
+    select(!`Ht-feet`) %>%
+    select(!`Ht-inches`)
+  
+  # Add 1 to j to continue loop
+  j <- j + 1
+}
+}
+```
+
+
+```{r}
+j <- 544
+
+for (team in c("ATL","ANA","PHX")){
+  for (year in c("07","08","09","10","11")){
+  html <- paste0("https://www.hockey-reference.com/teams/", team, "/20", year, ".html")
+  webpage <- read_html(html)
+  # Read the html into list of tables
+  test <- html_table(webpage, fill=TRUE)
+  # Extract the 3rd table for player info
+  list[[j]] <- test[[3]]
+  
+  # Separate height into feet and inches
+  list[[j]] <- list[[j]] %>%
+    separate(Ht, into = c("Ht-feet","Ht-inches"))
+
+  # Change to numeric values
+  list[[j]]$`Ht-feet` <- as.numeric(list[[j]]$`Ht-feet`)
+  list[[j]]$`Ht-inches` <- as.numeric(list[[j]]$`Ht-inches`)
+
+  # Calculate height in total number of inches
+  list[[j]] <- list[[j]] %>%
+    mutate(Ht = (`Ht-feet`)*12 + `Ht-inches`) %>%
+    select(!`Ht-feet`) %>%
+    select(!`Ht-inches`)
+  
+  # Add 1 to j to continue loop
+  j <- j + 1
+}
+}
+```
+
+
+```{r}
+j <- 559
+
+for (team in c("ATL","MDA","PHX")){
+  for (year in c("01","02","03","04","06")){
+  html <- paste0("https://www.hockey-reference.com/teams/", team, "/20", year, ".html")
+  webpage <- read_html(html)
+  # Read the html into list of tables
+  test <- html_table(webpage, fill=TRUE)
+  # Extract the 3rd table for player info
+  list[[j]] <- test[[3]]
+  
+  # Separate height into feet and inches
+  list[[j]] <- list[[j]] %>%
+    separate(Ht, into = c("Ht-feet","Ht-inches"))
+
+  # Change to numeric values
+  list[[j]]$`Ht-feet` <- as.numeric(list[[j]]$`Ht-feet`)
+  list[[j]]$`Ht-inches` <- as.numeric(list[[j]]$`Ht-inches`)
+
+  # Calculate height in total number of inches
+  list[[j]] <- list[[j]] %>%
+    mutate(Ht = (`Ht-feet`)*12 + `Ht-inches`) %>%
+    select(!`Ht-feet`) %>%
+    select(!`Ht-inches`)
+  
+  # Add 1 to j to continue loop
+  j <- j + 1
+}
+}
+```
+
+
+
+
+
+
