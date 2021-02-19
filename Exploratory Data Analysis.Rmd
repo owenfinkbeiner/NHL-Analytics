@@ -16,9 +16,12 @@ setwd("C:\\Users\\owenf\\OneDrive\\Desktop\\NHL Analytics")
 ```{r}
 # Goals
 for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
-  plot1 <- team %>%
-  ggplot(aes_string(colnames(team[i]), colnames(team[26]))) +
-  geom_point(stat = "identity")
+  plot1 <- team_df %>%
+  ggplot(aes_string(colnames(team_df[i]), colnames(team_df[26]))) +
+  geom_point() +
+  geom_smooth(method="lm", se=FALSE) +
+  xlim(0,2.5) +
+  ylim(0.2,0.8)
   
   print(plot1)
 }
@@ -29,7 +32,10 @@ for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
 for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
   plot2 <- team %>%
   ggplot(aes_string(colnames(team[i+1]), colnames(team[26]))) +
-  geom_point(stat = "identity")
+  geom_point(stat = "identity") +
+  geom_smooth(method="lm", se=FALSE) +
+  xlim(0, 3.5) +
+  ylim(0.2, 0.8)
   
   print(plot2)
 }
@@ -40,7 +46,10 @@ for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
 for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
   plot3 <- team %>%
   ggplot(aes_string(colnames(team[i+2]), colnames(team[26]))) +
-  geom_point(stat = "identity")
+  geom_point(stat = "identity") +
+  geom_smooth(method="lm", se=FALSE) +
+  xlim(0,18) +
+  ylim(0.2,0.8)
   
   print(plot3)
 }
@@ -51,7 +60,10 @@ for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
 for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
   plot4 <- team %>%
   ggplot(aes_string(colnames(team[i+3]), colnames(team[26]))) +
-  geom_point(stat = "identity")
+  geom_point(stat = "identity") +
+  geom_smooth(method="lm", se=FALSE) +
+  xlim(0,0.75) +
+  ylim(0.2,0.8)
   
   print(plot4)
 }
@@ -62,7 +74,10 @@ for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
 for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
   plot5 <- team %>%
   ggplot(aes_string(colnames(team[i+4]), colnames(team[26]))) +
-  geom_point(stat = "identity")
+  geom_point(stat = "identity") +
+  geom_smooth(method="lm", se=FALSE) +
+  xlim(0,0.75) +
+  ylim(0.2,0.8)
   
   print(plot5)
 }
@@ -73,7 +88,10 @@ for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
 for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
   plot6 <- team %>%
   ggplot(aes_string(colnames(team[i+5]), colnames(team[26]))) +
-  geom_point(stat = "identity")
+  geom_point(stat = "identity") +
+  geom_smooth(method="lm", se=FALSE) +
+  xlim(0, 0.2) +
+  ylim(0.2,0.8)
   
   print(plot6)
 }
@@ -84,7 +102,10 @@ for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
 for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
   plot7 <- team %>%
   ggplot(aes_string(colnames(team[i+6]), colnames(team[26]))) +
-  geom_point(stat = "identity")
+  geom_point(stat = "identity") +
+  geom_smooth(method="lm", se=FALSE) +
+  xlim(0,10) +
+  ylim(0.2,0.8)
   
   print(plot7)
 }
@@ -95,7 +116,10 @@ for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
 for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
   plot8 <- team %>%
   ggplot(aes_string(colnames(team[i+7]), colnames(team[26]))) +
-  geom_point(stat = "identity")
+  geom_point(stat = "identity") +
+  geom_smooth(method="lm", se=FALSE) +
+  xlim(0,30) +
+  ylim(0.2,0.8)
   
   print(plot8)
 }
@@ -106,7 +130,10 @@ for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
 for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
   plot9 <- team %>%
   ggplot(aes_string(colnames(team[i-1]), colnames(team[26]))) +
-  geom_point(stat = "identity")
+  geom_point(stat = "identity") +
+  geom_smooth(method="lm", se=FALSE) +
+  xlim(0,82) +
+  ylim(0.2,0.8)
   
   print(plot9)
 }
@@ -115,7 +142,10 @@ for (i in c(31,40,49,58,67,76,85,94,103,112,121,130)){
 ```{r}
 team %>%
   ggplot(aes(`avgDPS_D_1-3`, WIN.pct)) +
-  geom_point(stat = "identity")
+  geom_point(stat = "identity") +
+  geom_smooth(method="lm", se=FALSE) +
+  xlim(0, 0.25) +
+  ylim(0.2,0.8)
 ```
 
 

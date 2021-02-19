@@ -1,0 +1,221 @@
+---
+title: "Read In Goalie Stats"
+output: html_notebook
+---
+
+
+```{r}
+# Load necessary packages
+library(tidyverse)
+library(rvest)
+
+# Set working directory
+setwd("C:\\Users\\owenf\\OneDrive\\Desktop\\NHL Analytics")
+```
+
+
+```{r}
+goalie_stats <- list()
+team_goalie_stats <- list()
+j <- 1
+
+for (team in c("DET","NSH","CHI","STL","CBJ","COL","EDM","VAN","CGY","MIN","DAL","SJS","LAK","ANA","NJD","PHI","PIT","NYR","NYI","OTT","BUF","TOR","BOS","MTL","WSH","CAR","FLA","TBL")){
+  for (year in c("08","09","10","11","12","13","14","15","16","17","18","19","20")){
+  html <- paste0("https://www.hockey-reference.com/teams/", team, "/20", year, ".html")
+  webpage <- read_html(html)
+  # Read the html into list of tables
+  test <- html_table(webpage, fill=TRUE)
+  # Extract the 5th table for goalie stats
+  goalie_stats[[j]] <- test[[5]]
+  
+  # Make first row header
+  names(goalie_stats[[j]]) <- as.matrix(goalie_stats[[j]][1, ]) #sets first row as column names
+  goalie_stats[[j]] <- goalie_stats[[j]][-1, ] #remove header column of data frame
+  
+  # Rename columns
+  colnames(goalie_stats[[j]]) <- c("Rk","Player","Age","GP","GS","W","L","OTL","GA","SA","SV","SV_pct","GAA","SO","MIN","QS","QS_pct","RBS","GA_pct","GSAA","adjGAA","GPS")
+  
+  # Remove last row and make it into a separate data frame
+  team_goalie_stats[[j]] <- tail(goalie_stats[[j]], n=1)
+  goalie_stats[[j]] <- goalie_stats[[j]][-nrow(goalie_stats[[j]]),]
+  
+  # Change name to team and drop some columns
+  team_goalie_stats[[j]]$Player[1] <- paste0(team, year)
+  team_goalie_stats[[j]] <- team_goalie_stats[[j]] %>%
+    rename(team = Player) %>%
+    select(-Rk, -Age, -GS)
+  
+  # Add team played for into goalie data frame
+  goalie_stats[[j]]$Team = paste0(team, year)
+  
+  # Add 1 to j to continue loop
+  j <- j + 1
+}
+}
+```
+
+
+```{r}
+j <- 365
+
+for (team in c("WPG","VEG","ARI")){
+  for (year in c("18","19","20")){
+  html <- paste0("https://www.hockey-reference.com/teams/", team, "/20", year, ".html")
+  webpage <- read_html(html)
+  # Read the html into list of tables
+  test <- html_table(webpage, fill=TRUE)
+  # Extract the 5th table for goalie stats
+  goalie_stats[[j]] <- test[[5]]
+  
+  # Make first row header
+  names(goalie_stats[[j]]) <- as.matrix(goalie_stats[[j]][1, ]) #sets first row as column names
+  goalie_stats[[j]] <- goalie_stats[[j]][-1, ] #remove header column of data frame
+  
+  # Rename columns
+  colnames(goalie_stats[[j]]) <- c("Rk","Player","Age","GP","GS","W","L","OTL","GA","SA","SV","SV_pct","GAA","SO","MIN","QS","QS_pct","RBS","GA_pct","GSAA","adjGAA","GPS")
+  
+  # Remove last row and make it into a separate data frame
+  team_goalie_stats[[j]] <- tail(goalie_stats[[j]], n=1)
+  goalie_stats[[j]] <- goalie_stats[[j]][-nrow(goalie_stats[[j]]),]
+  
+  # Change name to team and drop some columns
+  team_goalie_stats[[j]]$Player[1] <- paste0(team, year)
+  team_goalie_stats[[j]] <- team_goalie_stats[[j]] %>%
+    rename(team = Player) %>%
+    select(-Rk, -Age, -GS)
+  
+  # Add team played for into goalie data frame
+  goalie_stats[[j]]$Team = paste0(team, year)
+  
+  # Add 1 to j to continue loop
+  j <- j + 1
+}
+}
+```
+
+
+```{r}
+j <- 374
+
+for (team in c("WPG","ARI")){
+  for (year in c("15","16","17")){
+  html <- paste0("https://www.hockey-reference.com/teams/", team, "/20", year, ".html")
+  webpage <- read_html(html)
+  # Read the html into list of tables
+  test <- html_table(webpage, fill=TRUE)
+  # Extract the 5th table for goaie stats
+  goalie_stats[[j]] <- test[[5]]
+  
+  # Make first row header
+  names(goalie_stats[[j]]) <- as.matrix(goalie_stats[[j]][1, ]) #sets first row as column names
+  goalie_stats[[j]] <- goalie_stats[[j]][-1, ] #remove header column of data frame
+  
+  # Rename columns
+  colnames(goalie_stats[[j]]) <- c("Rk","Player","Age","GP","GS","W","L","OTL","GA","SA","SV","SV_pct","GAA","SO","MIN","QS","QS_pct","RBS","GA_pct","GSAA","adjGAA","GPS")
+  
+  # Remove last row and make it into a separate data frame
+  team_goalie_stats[[j]] <- tail(goalie_stats[[j]], n=1)
+  goalie_stats[[j]] <- goalie_stats[[j]][-nrow(goalie_stats[[j]]),]
+  
+  # Change name to team and drop some columns
+  team_goalie_stats[[j]]$Player[1] <- paste0(team, year)
+  team_goalie_stats[[j]] <- team_goalie_stats[[j]] %>%
+    rename(team = Player) %>%
+    select(-Rk, -Age, -GS)
+  
+  # Add team played for into goalie data frame
+  goalie_stats[[j]]$Team = paste0(team, year)
+  
+  # Add 1 to j to continue loop
+  j <- j + 1
+}
+}
+```
+
+
+```{r}
+j <- 380
+
+for (team in c("WPG","PHX")){
+  for (year in c("12","13","14")){
+  html <- paste0("https://www.hockey-reference.com/teams/", team, "/20", year, ".html")
+  webpage <- read_html(html)
+  # Read the html into list of tables
+  test <- html_table(webpage, fill=TRUE)
+  # Extract the 5th table for goalie stats
+  goalie_stats[[j]] <- test[[5]]
+  
+  # Make first row header
+  names(goalie_stats[[j]]) <- as.matrix(goalie_stats[[j]][1, ]) #sets first row as column names
+  goalie_stats[[j]] <- goalie_stats[[j]][-1, ] #remove header column of data frame
+  
+  # Rename columns
+  colnames(goalie_stats[[j]]) <- c("Rk","Player","Age","GP","GS","W","L","OTL","GA","SA","SV","SV_pct","GAA","SO","MIN","QS","QS_pct","RBS","GA_pct","GSAA","adjGAA","GPS")
+  
+  # Remove last row and make it into a separate data frame
+  team_goalie_stats[[j]] <- tail(goalie_stats[[j]], n=1)
+  goalie_stats[[j]] <- goalie_stats[[j]][-nrow(goalie_stats[[j]]),]
+  
+  # Change name to team and drop some columns
+  team_goalie_stats[[j]]$Player[1] <- paste0(team, year)
+  team_goalie_stats[[j]] <- team_goalie_stats[[j]] %>%
+    rename(team = Player) %>%
+    select(-Rk, -Age, -GS)
+  
+  # Add team played for into goalie data frame
+  goalie_stats[[j]]$Team = paste0(team, year)
+  
+  # Add 1 to j to continue loop
+  j <- j + 1
+}
+}
+```
+
+
+```{r}
+j <- 386
+
+for (team in c("ATL","PHX")){
+  for (year in c("08","09","10","11")){
+  html <- paste0("https://www.hockey-reference.com/teams/", team, "/20", year, ".html")
+  webpage <- read_html(html)
+  # Read the html into list of tables
+  test <- html_table(webpage, fill=TRUE)
+  # Extract the tth table for goalie stats
+  goalie_stats[[j]] <- test[[5]]
+  
+  # Make first row header
+  names(goalie_stats[[j]]) <- as.matrix(goalie_stats[[j]][1, ]) #sets first row as column names
+  goalie_stats[[j]] <- goalie_stats[[j]][-1, ] #remove header column of data frame
+  
+  # Rename columns
+  colnames(goalie_stats[[j]]) <- c("Rk","Player","Age","GP","GS","W","L","OTL","GA","SA","SV","SV_pct","GAA","SO","MIN","QS","QS_pct","RBS","GA_pct","GSAA","adjGAA","GPS")
+  
+  # Remove last row and make it into a separate data frame
+  team_goalie_stats[[j]] <- tail(goalie_stats[[j]], n=1)
+  goalie_stats[[j]] <- goalie_stats[[j]][-nrow(goalie_stats[[j]]),]
+  
+  # Change name to team and drop some columns
+  team_goalie_stats[[j]]$Player[1] <- paste0(team, year)
+  team_goalie_stats[[j]] <- team_goalie_stats[[j]] %>%
+    rename(team = Player) %>%
+    select(-Rk, -Age, -GS)
+  
+  # Add team played for into goalie data frame
+  goalie_stats[[j]]$Team = paste0(team, year)
+  
+  # Add 1 to j to continue loop
+  j <- j + 1
+}
+}
+```
+
+
+```{r}
+goalies <- bind_rows(team_goalie_stats, .id = "column_label")
+```
+
+
+
+
+

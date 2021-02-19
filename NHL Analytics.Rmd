@@ -4,10 +4,399 @@ author: "Owen Finkbeiner"
 output: html_notebook
 ---
 
+
 ```{r}
 # Load necessary packages
 library(tidyverse)
 library(ggplot2)
+library(rvest)
+
+# Set working directory
+setwd("C:\\Users\\owenf\\OneDrive\\Desktop\\NHL Analytics")
+```
+
+
+
+
+
+```{r}
+require(data.table)
+
+# Create empty list
+full_stats <- list()
+
+# Fill each list index with the player stats for one team, lining on with row number of the same team in team data table
+for (i in 1:303){
+  full_stats[[i]] <- setDT(teams[[i]])[setDT(team[i,]), on=c("Team", "Year")]
+}
+```
+
+
+```{r}
+for (i in 1:393){
+  player_stats[[i]]$GP.team = team_stats[[i]]$GP
+  
+  player_stats[[i]]$GP <- as.numeric(player_stats[[i]]$GP)
+  player_stats[[i]]$G <- as.numeric(player_stats[[i]]$G)
+  player_stats[[i]]$A <- as.numeric(player_stats[[i]]$A)
+  player_stats[[i]]$PTS <- as.numeric(player_stats[[i]]$PTS)
+  player_stats[[i]]$PlusMinus <- as.numeric(player_stats[[i]]$PlusMinus)
+  player_stats[[i]]$PIM <- as.numeric(player_stats[[i]]$PIM)
+  player_stats[[i]]$G.EV <- as.numeric(player_stats[[i]]$G.EV)
+  player_stats[[i]]$G.PP <- as.numeric(player_stats[[i]]$G.PP)
+  player_stats[[i]]$G.SH <- as.numeric(player_stats[[i]]$G.SH)
+  player_stats[[i]]$G.GW <- as.numeric(player_stats[[i]]$G.GW)
+  player_stats[[i]]$A.EV <- as.numeric(player_stats[[i]]$A.EV)
+  player_stats[[i]]$A.PP <- as.numeric(player_stats[[i]]$A.PP)
+  player_stats[[i]]$A.SH <- as.numeric(player_stats[[i]]$A.SH)
+  player_stats[[i]]$S <- as.numeric(player_stats[[i]]$S)
+  player_stats[[i]]$S_pct <- as.numeric(player_stats[[i]]$S_pct)
+  player_stats[[i]]$TOI <- as.numeric(player_stats[[i]]$TOI)
+  player_stats[[i]]$OPS <- as.numeric(player_stats[[i]]$OPS)
+  player_stats[[i]]$DPS <- as.numeric(player_stats[[i]]$DPS)
+  player_stats[[i]]$PS <- as.numeric(player_stats[[i]]$PS)
+  player_stats[[i]]$BLK <- as.numeric(player_stats[[i]]$BLK)
+  player_stats[[i]]$HIT <- as.numeric(player_stats[[i]]$HIT)
+  player_stats[[i]]$FOW <- as.numeric(player_stats[[i]]$FOW)
+  player_stats[[i]]$FOL <- as.numeric(player_stats[[i]]$FOL)
+  player_stats[[i]]$FO_pct <- as.numeric(player_stats[[i]]$FO_pct)
+  player_stats[[i]]$GP.team <- as.numeric(player_stats[[i]]$GP.team)
+}
+```
+
+
+
+```{r}
+# Add variables to change some stats to per game
+for (i in 1:393){
+  player_stats[[i]] <- player_stats[[i]] %>%
+  mutate(GP_pct = (GP/GP.team), #GP: games played
+         G_per60Mins = (G/TOI)*60, #G: goals
+         A_per60Mins = (A/TOI)*60, #A: assists
+         PTS_per60Mins = (PTS/TOI)*60, #PTS: points
+         S_per60Mins = (S/TOI)*60, #S: shots
+         OPS_per60Mins = (OPS/TOI)*60, #OPS: offensive point shares
+         DPS_per60Mins = (DPS/TOI)*60, #DPS: defensive point shares
+         PS_per60Mins = (PS/TOI)*60, #PS: point shares
+         BLK_per60Mins = (BLK/TOI)*60, #BLK: blocks
+         HIT_per60Mins = (HIT/TOI)*60, #HIT: hits
+         TOI_perGame = TOI/GP, #TOI: time on ice
+         
+         # Create position variable to generalize each player into forward, defense, goalie
+         Position = if_else(Pos=="G", "G", 
+                            if_else(Pos=="D", "D",
+                                    if_else(Pos=="C", "F",
+                                            if_else(Pos=="RW", "F", 
+                                                    if_else(Pos=="LW", "F",
+                                                            if_else(Pos=="W", "F", "NAN")))))))
+}
+```
+
+
+```{r}
+# Create forwards and defensemen lists that filter out just players at that position from the team in full_stats
+# Players must have appeared in at least 25% of the team's games to be included in the data
+
+forwards <- list()
+defensemen <- list()
+
+for (i in 1:393){
+  forwards[[i]] <- player_stats[[i]] %>%
+    filter(GP_pct >= 0.25, Position == "F") %>%
+    arrange(desc(TOI_perGame)) # Order forwards by time on ice from highest to lowest
+  
+  defensemen[[i]] <- player_stats[[i]] %>%
+    filter(GP_pct >= 0.25, Position == "D") %>%
+    arrange(desc(TOI_perGame)) # Order defensemen by time on ice from highest to lowest
+  
+  team_stats[[i]]$num_F <- nrow(forwards[[i]])
+  team_stats[[i]]$num_D <- nrow(defensemen[[i]])
+}
+```
+
+
+```{r}
+# Create new variables in team table, for average statistic values among players in groups
+# Groups determined by their ranking of most time on ice per game
+
+for (i in 1:393){
+  f <- list()
+  
+  # Stats for each individual forward
+  for (j in c(1:12)){
+    f[[j]] <- forwards[[i]] %>%
+      slice(j)
+  
+    team_stats[[i]][[paste0("GP_F_",j)]] <- mean(f[[j]]$GP)
+    team_stats[[i]][[paste0("G_F_",j)]] <- mean(f[[j]]$G_per60Mins)
+    team_stats[[i]][[paste0("PTS_F_",j)]] <- mean(f[[j]]$PTS_per60Mins)
+    team_stats[[i]][[paste0("Shots_F_",j)]] <- mean(f[[j]]$S_per60Mins)
+    team_stats[[i]][[paste0("PS_F_",j)]] <- mean(f[[j]]$PS_per60Mins)
+    team_stats[[i]][[paste0("OPS_F_",j)]] <- mean(f[[j]]$OPS_per60Mins)
+    team_stats[[i]][[paste0("DPS_F_",j)]] <- mean(f[[j]]$DPS_per60Mins)
+    team_stats[[i]][[paste0("BLK_F_",j)]] <- mean(f[[j]]$BLK_per60Mins)
+    team_stats[[i]][[paste0("HIT_F_",j)]] <- mean(f[[j]]$HIT_per60Mins)
+  }
+  
+  # Average stats for forward groups of two
+  for (k in c(1,3,5,7,9,11)){
+    f[[k]] <- forwards[[i]] %>%
+      slice(k:(k+1))
+  
+    team_stats[[i]][[paste0("avgGP_F_",k,"-",(k+1))]] <- mean(f[[k]]$GP)
+    team_stats[[i]][[paste0("avgG_F_",k,"-",(k+1))]] <- mean(f[[k]]$G_per60Mins)
+    team_stats[[i]][[paste0("avgPTS_F_",k,"-",(k+1))]] <- mean(f[[k]]$PTS_per60Mins)
+    team_stats[[i]][[paste0("avgShots_F_",k,"-",(k+1))]] <- mean(f[[k]]$S_per60Mins)
+    team_stats[[i]][[paste0("avgPS_F_",k,"-",(k+1))]] <- mean(f[[k]]$PS_per60Mins)
+    team_stats[[i]][[paste0("avgOPS_F_",k,"-",(k+1))]] <- mean(f[[k]]$OPS_per60Mins)
+    team_stats[[i]][[paste0("avgDPS_F_",k,"-",(k+1))]] <- mean(f[[k]]$DPS_per60Mins)
+    team_stats[[i]][[paste0("avgBLK_F_",k,"-",(k+1))]] <- mean(f[[k]]$BLK_per60Mins)
+    team_stats[[i]][[paste0("avgHIT_F_",k,"-",(k+1))]] <- mean(f[[k]]$HIT_per60Mins)
+  }
+  
+  # Average stats for forward groups of three
+  for (m in c(1,4,7,10)){
+    f[[m]] <- forwards[[i]] %>%
+      slice(m:(m+2))
+  
+    team_stats[[i]][[paste0("avgGP_F_",m,"-",(m+2))]] <- mean(f[[m]]$GP)
+    team_stats[[i]][[paste0("avgG_F_",m,"-",(m+2))]] <- mean(f[[m]]$G_per60Mins)
+    team_stats[[i]][[paste0("avgPTS_F_",m,"-",(m+2))]] <- mean(f[[m]]$PTS_per60Mins)
+    team_stats[[i]][[paste0("avgShots_F_",m,"-",(m+2))]] <- mean(f[[m]]$S_per60Mins)
+    team_stats[[i]][[paste0("avgPS_F_",m,"-",(m+2))]] <- mean(f[[m]]$PS_per60Mins)
+    team_stats[[i]][[paste0("avgOPS_F_",m,"-",(m+2))]] <- mean(f[[m]]$OPS_per60Mins)
+    team_stats[[i]][[paste0("avgDPS_F_",m,"-",(m+2))]] <- mean(f[[m]]$DPS_per60Mins)
+    team_stats[[i]][[paste0("avgBLK_F_",m,"-",(m+2))]] <- mean(f[[m]]$BLK_per60Mins)
+    team_stats[[i]][[paste0("avgHIT_F_",m,"-",(m+2))]] <- mean(f[[m]]$HIT_per60Mins)
+  }
+  
+  # Average stats for forward groups of six
+  for (n in c(1,7)){
+    f[[n]] <- forwards[[i]] %>%
+      slice(n:(n+5))
+  
+    team_stats[[i]][[paste0("avgGP_F_",n,"-",(n+5))]] <- mean(f[[n]]$GP)
+    team_stats[[i]][[paste0("avgG_F_",n,"-",(n+5))]] <- mean(f[[n]]$G_per60Mins)
+    team_stats[[i]][[paste0("avgPTS_F_",n,"-",(n+5))]] <- mean(f[[n]]$PTS_per60Mins)
+    team_stats[[i]][[paste0("avgShots_F_",n,"-",(n+5))]] <- mean(f[[n]]$S_per60Mins)
+    team_stats[[i]][[paste0("avgPS_F_",n,"-",(n+5))]] <- mean(f[[n]]$PS_per60Mins)
+    team_stats[[i]][[paste0("avgOPS_F_",n,"-",(n+5))]] <- mean(f[[n]]$OPS_per60Mins)
+    team_stats[[i]][[paste0("avgDPS_F_",n,"-",(n+5))]] <- mean(f[[n]]$DPS_per60Mins)
+    team_stats[[i]][[paste0("avgBLK_F_",n,"-",(n+5))]] <- mean(f[[n]]$BLK_per60Mins)
+    team_stats[[i]][[paste0("avgHIT_F_",n,"-",(n+5))]] <- mean(f[[n]]$HIT_per60Mins)
+  }
+}
+```
+
+
+```{r}
+for (i in 1:393){
+  d <- list()
+
+  # Stats for each individual defensemen
+  for (j in c(1:6)){
+    d[[j]] <- defensemen[[i]] %>%
+      slice(j)
+  
+    team_stats[[i]][[paste0("GP_D_",j)]] <- mean(d[[j]]$GP)
+    team_stats[[i]][[paste0("G_D_",j)]] <- mean(d[[j]]$G_per60Mins)
+    team_stats[[i]][[paste0("PTS_D_",j)]] <- mean(d[[j]]$PTS_per60Mins)
+    team_stats[[i]][[paste0("Shots_D_",j)]] <- mean(d[[j]]$S_per60Mins)
+    team_stats[[i]][[paste0("PS_D_",j)]] <- mean(d[[j]]$PS_per60Mins)
+    team_stats[[i]][[paste0("OPS_D_",j)]] <- mean(d[[j]]$OPS_per60Mins)
+    team_stats[[i]][[paste0("DPS_D_",j)]] <- mean(d[[j]]$DPS_per60Mins)
+    team_stats[[i]][[paste0("BLK_D_",j)]] <- mean(d[[j]]$BLK_per60Mins)
+    team_stats[[i]][[paste0("HIT_D_",j)]] <- mean(d[[j]]$HIT_per60Mins)
+  }
+
+  # Average stats for defensemen groups of two
+  for (k in c(1,3,5)){
+    d[[k]] <- defensemen[[i]] %>%
+      slice(k:(k+1))
+  
+    team_stats[[i]][[paste0("avgGP_D_",k,"-",(k+1))]] <- mean(d[[k]]$GP)
+    team_stats[[i]][[paste0("avgG_D_",k,"-",(k+1))]] <- mean(d[[k]]$G_per60Mins)
+    team_stats[[i]][[paste0("avgPTS_D_",k,"-",(k+1))]] <- mean(d[[k]]$PTS_per60Mins)
+    team_stats[[i]][[paste0("avgShots_D_",k,"-",(k+1))]] <- mean(d[[k]]$S_per60Mins)
+    team_stats[[i]][[paste0("avgPS_D_",k,"-",(k+1))]] <- mean(d[[k]]$PS_per60Mins)
+    team_stats[[i]][[paste0("avgOPS_D_",k,"-",(k+1))]] <- mean(d[[k]]$OPS_per60Mins)
+    team_stats[[i]][[paste0("avgDPS_D_",k,"-",(k+1))]] <- mean(d[[k]]$DPS_per60Mins)
+    team_stats[[i]][[paste0("avgBLK_D_",k,"-",(k+1))]] <- mean(d[[k]]$BLK_per60Mins)
+    team_stats[[i]][[paste0("avgHIT_D_",k,"-",(k+1))]] <- mean(d[[k]]$HIT_per60Mins)
+  }
+  
+  # Average stats for defensemen groups of three
+  for (m in c(1,4)){
+    d[[m]] <- defensemen[[i]] %>%
+      slice(m:(m+2))
+  
+    team_stats[[i]][[paste0("avgGP_D_",m,"-",(m+2))]] <- mean(d[[m]]$GP)
+    team_stats[[i]][[paste0("avgG_D_",m,"-",(m+2))]] <- mean(d[[m]]$G_per60Mins)
+    team_stats[[i]][[paste0("avgPTS_D_",m,"-",(m+2))]] <- mean(d[[m]]$PTS_per60Mins)
+    team_stats[[i]][[paste0("avgShots_D_",m,"-",(m+2))]] <- mean(d[[m]]$S_per60Mins)
+    team_stats[[i]][[paste0("avgPS_D_",m,"-",(m+2))]] <- mean(d[[m]]$PS_per60Mins)
+    team_stats[[i]][[paste0("avgOPS_D_",m,"-",(m+2))]] <- mean(d[[m]]$OPS_per60Mins)
+    team_stats[[i]][[paste0("avgDPS_D_",m,"-",(m+2))]] <- mean(d[[m]]$DPS_per60Mins)
+    team_stats[[i]][[paste0("avgBLK_D_",m,"-",(m+2))]] <- mean(d[[m]]$BLK_per60Mins)
+    team_stats[[i]][[paste0("avgHIT_D_",m,"-",(m+2))]] <- mean(d[[m]]$HIT_per60Mins)
+  }
+}
+```
+
+
+```{r}
+for (i in 1:393){
+  
+  # Add goalie stats to the data
+  
+  team_stats[[i]]$SV_pct <- as.numeric(team_goalie_stats[[i]]$SV_pct)
+  team_stats[[i]]$GAA <- as.numeric(team_goalie_stats[[i]]$GAA)
+  team_stats[[i]]$QS_pct <- as.numeric(team_goalie_stats[[i]]$QS_pct)
+  team_stats[[i]]$adjGAA <- as.numeric(team_goalie_stats[[i]]$adjGAA)
+  team_stats[[i]]$GSAA <- as.numeric(team_goalie_stats[[i]]$GSAA)
+  team_stats[[i]]$GPS <- as.numeric(team_goalie_stats[[i]]$GPS)
+  
+  team_goalie_stats[[i]]$RBS <- as.numeric(team_goalie_stats[[i]]$RBS)
+  team_goalie_stats[[i]]$GP <- as.numeric(team_goalie_stats[[i]]$GP)
+  team_stats[[i]]$RBS_pct <- team_goalie_stats[[i]]$RBS / team_goalie_stats[[i]]$GP
+}
+```
+
+
+```{r}
+chi17 <- team_stats[[36]]
+```
+
+
+```{r}
+team_df <- bind_rows(team_stats)
+```
+
+
+```{r}
+full_df <- merge(team_wins, team_df, by="team", all=TRUE)
+```
+
+
+
+
+```{r}
+Info <- bind_rows(player_info)
+Stats <- bind_rows(player_stats)
+```
+
+
+```{r}
+players <- merge(Info, Stats, by=c("Player","Team"))
+```
+
+
+
+#######################
+
+Next Challenge: Calculate average height and weight on ice for a team
+
+#######################
+
+
+
+
+
+```{r}
+players %>%
+  mutate(Ht_TOI = Ht * as.numeric(TOI))
+```
+
+
+```{r}
+players %>%
+  group_by(Team) %>%
+  summarise(Ht_mean = mean(Ht, na.rm = TRUE),
+            Ht_sd = sd(Ht, na.rm = TRUE),
+            Wt_mean = mean(Wt, na.rm = TRUE),
+            Wt_sd = sd(Wt, na.rm = TRUE))
+```
+
+
+
+
+
+
+
+```{r}
+team_df[2:348] <- lapply(team_df[2:348], as.numeric)
+```
+
+
+```{r}
+# Output team data frame into a csv file
+write.csv(team_df, 'full_team_data.csv')
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+# Load necessary packages
+library(tidyverse)
+library(ggplot2)
+library(rvest)
 
 # Set working directory
 setwd("C:\\Users\\owenf\\OneDrive\\Desktop\\NHL Analytics")
@@ -16,6 +405,7 @@ setwd("C:\\Users\\owenf\\OneDrive\\Desktop\\NHL Analytics")
 player <- read.csv("./player_stats.csv") #C:\\Users\\owenf\\OneDrive\\Desktop\\NHL Analytics\\
 team <- read.csv("./team_stats.csv")
 ```
+
 
 ```{r}
 # Arrange team data table so that the order of which team is listed lines up with order for players
@@ -29,6 +419,7 @@ groups <- player %>%
 teams <- group_split(groups)
 ```
 
+
 ```{r}
 require(data.table)
 
@@ -40,6 +431,7 @@ for (i in 1:303){
   full_stats[[i]] <- setDT(teams[[i]])[setDT(team[i,]), on=c("Team", "Year")]
 }
 ```
+
 
 ```{r}
 # Add variables to change some stats to per game
@@ -67,6 +459,7 @@ for (i in 1:303){
 }
 ```
 
+
 ```{r}
 # Create forwards and defensemen lists that filter out just players at that position from the team in full_stats
 # Players must have appeared in at least 25% of the team's games to be included in the data
@@ -87,6 +480,7 @@ for (i in 1:303){
   team$num_D[i] <- nrow(defensemen[[i]])
 }
 ```
+
 
 ```{r}
 # Create new variables in team table, for average statistic values among players in groups
@@ -161,6 +555,7 @@ for (i in 1:303){
 }
 ```
 
+
 ```{r}
 for (i in 1:303){
   d <- list()
@@ -215,9 +610,11 @@ for (i in 1:303){
 }
 ```
 
+
 ```{r}
 team
 ```
+
 
 ```{r}
 # Output team data frame into a csv file

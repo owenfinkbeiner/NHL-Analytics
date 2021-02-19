@@ -1,0 +1,85 @@
+---
+title: "Possession Change"
+output: html_notebook
+---
+
+
+```{r}
+# Load necessary packages
+library(tidyverse)
+library(rvest)
+
+# Set working directory
+setwd("C:\\Users\\owenf\\OneDrive\\Desktop\\NHL Analytics")
+```
+
+
+```{r}
+data <- list()
+
+for (i in 1:87){
+  offset = i*100
+  print(class(offset))
+  html <- paste0("https://stathead.com/hockey/ppbp_finder.cgi?request=1&
+order_by=games_played&match=single&season_start=1&
+year_max=2020&situation_id=5on5close&season_end=-1&
+order_by_asc=0&age_min=0&age_max=99&pos=S&year_min=2008&
+cstat[1]=games_played&ccomp[1]=gt&cval[1]=20&offset=", as.character(offset))
+  print(html)
+  webpage <- read_html(html)
+  # Read the html into list of tables
+  tables <- html_table(webpage, fill=TRUE)
+  # Extract the 1st table
+  data[[j+1]] <- tables[[1]]
+}
+```
+
+
+```{r}
+data <- list()
+i <- 1
+
+for (link in c("56dcw","3gbgG","mOtxr","TZ4MI","tWxVj","qxn93")){
+  html <- paste0("https://stathead.com/tiny/", link,".html")
+  webpage <- read_html(html)
+  tables <- html_table(webpage, fill = TRUE, header = TRUE)
+  data[[i]] <- tables[[1]]
+  #df[[i]] <- data[[1]]
+  
+  i <- i + 1
+}
+```
+
+
+```{r}
+players <- bind_rows(data)
+# Make first row header
+names(players) <- as.matrix(players[1, ]) #sets first row
+```
+
+
+```{r}
+html <- "https://stathead.com/tiny/56dcw.html"
+html1 <- "https://stathead.com/tiny/3gbgG.html"
+```
+
+
+```{r}
+# Read the html into list of tables
+tables <- html_table(webpage, fill=TRUE)
+```
+
+
+```{r}
+# Extract the 1st table
+data <- tables[[1]]
+```
+
+
+
+
+
+
+
+
+

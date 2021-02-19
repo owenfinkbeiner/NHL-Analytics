@@ -1,0 +1,70 @@
+---
+title: "Size EDA"
+output: html_notebook
+---
+
+
+```{r}
+allPlayers <- players %>%
+  group_by(Year) %>%
+  summarise(Ht_mean = mean(Ht, na.rm = TRUE),
+            Ht_sd = sd(Ht, na.rm = TRUE),
+            Wt_mean = mean(Wt, na.rm = TRUE),
+            Wt_sd = sd(Wt, na.rm = TRUE))
+
+plot(testData$Year, testData$Ht_mean)
+plot(testData$Year, testData$Ht_sd)
+plot(testData$Year, testData$Wt_mean)
+plot(testData$Year, testData$Wt_sd)
+```
+
+
+```{r}
+midRange <- players %>%
+  filter(Ht > quantile(Ht, 0.1, na.rm = TRUE), Ht < quantile(Ht, 0.9, na.rm = TRUE),
+         Wt > quantile(Wt, 0.1, na.rm = TRUE), Wt < quantile(Wt, 0.9, na.rm = TRUE)) %>%
+  group_by(Year) %>%
+  summarise(Ht_mean = mean(Ht, na.rm = TRUE),
+            Ht_sd = sd(Ht, na.rm = TRUE),
+            Wt_mean = mean(Wt, na.rm = TRUE),
+            Wt_sd = sd(Wt, na.rm = TRUE))
+
+plot(testData$Year, testData$Ht_mean)
+plot(testData$Year, testData$Ht_sd)
+plot(testData$Year, testData$Wt_mean)
+plot(testData$Year, testData$Wt_sd)
+```
+
+
+```{r}
+Small <- players %>%
+  filter(Ht < quantile(Ht, 0.1, na.rm = TRUE) |
+         Wt < quantile(Wt, 0.1, na.rm = TRUE)) %>%
+  group_by(Year) %>%
+  summarise(Ht_mean = mean(Ht, na.rm = TRUE),
+            Ht_sd = sd(Ht, na.rm = TRUE),
+            Wt_mean = mean(Wt, na.rm = TRUE),
+            Wt_sd = sd(Wt, na.rm = TRUE))
+
+plot(testData$Year, testData$Ht_mean)
+plot(testData$Year, testData$Ht_sd)
+plot(testData$Year, testData$Wt_mean)
+plot(testData$Year, testData$Wt_sd)
+```
+
+
+```{r}
+Big <- players %>%
+  filter(Ht > quantile(Ht, 0.9, na.rm = TRUE) |
+         Wt > quantile(Wt, 0.9, na.rm = TRUE)) %>%
+  group_by(Year) %>%
+  summarise(Ht_mean = mean(Ht, na.rm = TRUE),
+            Ht_sd = sd(Ht, na.rm = TRUE),
+            Wt_mean = mean(Wt, na.rm = TRUE),
+            Wt_sd = sd(Wt, na.rm = TRUE))
+
+plot(testData$Year, testData$Ht_mean)
+plot(testData$Year, testData$Ht_sd)
+plot(testData$Year, testData$Wt_mean)
+plot(testData$Year, testData$Wt_sd)
+```
