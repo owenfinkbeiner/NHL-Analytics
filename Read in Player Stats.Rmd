@@ -40,6 +40,9 @@ for (team in c("DET","NSH","CHI","STL","CBJ","COL","EDM","VAN","CGY","MIN","DAL"
   team_stats[[j]] <- tail(player_stats[[j]], n=1)
   player_stats[[j]] <- player_stats[[j]][-nrow(player_stats[[j]]),]
   
+  # Filter out all goalies
+  player_stats[[j]] <- filter(player_stats[[j]], Pos != "G")
+  
   # Change player to team and drop some columns
   team_stats[[j]]$Player[1] <- paste0(team, year)
   team_stats[[j]] <- team_stats[[j]] %>%
@@ -81,6 +84,9 @@ for (team in c("WPG","VEG","ARI")){
   # Remove last row and make it into a separate data frame
   team_stats[[j]] <- tail(player_stats[[j]], n=1)
   player_stats[[j]] <- player_stats[[j]][-nrow(player_stats[[j]]),]
+  
+  # Filter out all goalies
+  player_stats[[j]] <- filter(player_stats[[j]], Pos != "G")
   
   # Change player to team and drop some columns
   team_stats[[j]]$Player[1] <- paste0(team, year)
@@ -124,6 +130,9 @@ for (team in c("WPG","ARI")){
   team_stats[[j]] <- tail(player_stats[[j]], n=1)
   player_stats[[j]] <- player_stats[[j]][-nrow(player_stats[[j]]),]
   
+  # Filter out all goalies
+  player_stats[[j]] <- filter(player_stats[[j]], Pos != "G")
+  
   # Change player to team and drop some columns
   team_stats[[j]]$Player[1] <- paste0(team, year)
   team_stats[[j]] <- team_stats[[j]] %>%
@@ -166,6 +175,9 @@ for (team in c("WPG","PHX")){
   team_stats[[j]] <- tail(player_stats[[j]], n=1)
   player_stats[[j]] <- player_stats[[j]][-nrow(player_stats[[j]]),]
   
+  # Filter out all goalies
+  player_stats[[j]] <- filter(player_stats[[j]], Pos != "G")
+  
   # Change player to team and drop some columns
   team_stats[[j]]$Player[1] <- paste0(team, year)
   team_stats[[j]] <- team_stats[[j]] %>%
@@ -207,6 +219,9 @@ for (team in c("ATL","PHX")){
   # Remove last row and make it into a separate data frame
   team_stats[[j]] <- tail(player_stats[[j]], n=1)
   player_stats[[j]] <- player_stats[[j]][-nrow(player_stats[[j]]),]
+  
+  # Filter out all goalies
+  player_stats[[j]] <- filter(player_stats[[j]], Pos != "G")
   
   # Change player to team and drop some columns
   team_stats[[j]]$Player[1] <- paste0(team, year)

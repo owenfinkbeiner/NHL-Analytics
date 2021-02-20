@@ -94,6 +94,14 @@ for (i in 1:393){
 
 
 ```{r}
+# Percentage of total time on ice
+for (i in 1:393){
+  player_stats[[i]] <- player_stats[[i]] %>%
+    mutate(OI_pct = as.numeric(TOI) / as.numeric(sum(player_stats[[i]]$TOI)))
+```
+
+
+```{r}
 # Create forwards and defensemen lists that filter out just players at that position from the team in full_stats
 # Players must have appeared in at least 25% of the team's games to be included in the data
 
@@ -288,6 +296,9 @@ Stats <- bind_rows(player_stats)
 
 ```{r}
 players <- merge(Info, Stats, by=c("Player","Team"))
+
+players <- players %>%
+  mutate(Exp = replace_na(Exp, 0))
 ```
 
 
@@ -303,8 +314,12 @@ Next Challenge: Calculate average height and weight on ice for a team
 
 
 ```{r}
-players %>%
-  mutate(Ht_TOI = Ht * as.numeric(TOI))
+# Height and weight weighted by ice time
+
+players <- players %>%
+  filter(!Position=="G") %>%
+  mutate(Ht_min = (Ht * as.numeric(TOI)) / ,
+         Wt_min = (Wt * as.numeric(TOI) * GP)/60)
 ```
 
 
@@ -318,6 +333,12 @@ players %>%
 ```
 
 
+```{r}
+players %>%
+  group_by(Team) %>%
+  summarise(Ht_min = (Ht * as.numeric(TOI)) / sum(as.numeric(TOI)),
+            Wt_min = (Wt * as.numeric(TOI)) / sum(as.numeric(TOI)))
+```
 
 
 
